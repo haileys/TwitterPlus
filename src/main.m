@@ -3,9 +3,9 @@
 #import <Foundation/Foundation.h>
 #import "hackery.h"
 
-IVAR_DECL(ABUITextRenderer, attributedString);
-IVAR_DECL(TMTimelineStatusCell, _fullNameRenderer);
-IVAR_DECL(TMTimelineStatusCell, _usernameRenderer);
+IVAR_DECL(NSAttributedString*, ABUITextRenderer, attributedString);
+IVAR_DECL(id, TMTimelineStatusCell, _fullNameRenderer);
+IVAR_DECL(id, TMTimelineStatusCell, _usernameRenderer);
 
 @interface TwitterPlus_TMTimelineStatusCell : NSObject
 - (void)original_prepareForDisplay;
@@ -16,22 +16,22 @@ IVAR_DECL(TMTimelineStatusCell, _usernameRenderer);
 {
     [self original_prepareForDisplay];
 
-    void* fullNameRenderer = IVAR(TMTimelineStatusCell, _fullNameRenderer, self);
-    void* usernameRenderer = IVAR(TMTimelineStatusCell, _usernameRenderer, self);
+    id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer_get(self);
+    id usernameRenderer = TMTimelineStatusCell__usernameRenderer_get(self);
 
-    NSAttributedString* fullNameRendererStr = IVAR(ABUITextRenderer, attributedString, fullNameRenderer);
-    NSAttributedString* usernameRendererStr = IVAR(ABUITextRenderer, attributedString, usernameRenderer);
+    NSAttributedString* fullNameRendererStr = ABUITextRenderer_attributedString_get(fullNameRenderer);
+    NSAttributedString* usernameRendererStr = ABUITextRenderer_attributedString_get(usernameRenderer);
 
     NSDictionary* fullNameRendererStrAttributes = [fullNameRendererStr attributesAtIndex:0 effectiveRange:NULL];
     NSDictionary* usernameRendererStrAttributes = [usernameRendererStr attributesAtIndex:0 effectiveRange:NULL];
 
-    IVAR(ABUITextRenderer, attributedString, usernameRenderer) =
+    ABUITextRenderer_attributedString_set(usernameRenderer,
         [[NSAttributedString alloc] initWithString:[fullNameRendererStr string]
-                                    attributes:usernameRendererStrAttributes];
+                                    attributes:usernameRendererStrAttributes]);
 
-    IVAR(ABUITextRenderer, attributedString, fullNameRenderer) =
+    ABUITextRenderer_attributedString_set(fullNameRenderer,
         [[NSAttributedString alloc] initWithString:[usernameRendererStr string]
-                                    attributes:fullNameRendererStrAttributes];
+                                    attributes:fullNameRendererStrAttributes]);
 
     [fullNameRendererStrAttributes release];
     [usernameRendererStrAttributes release];
