@@ -38,8 +38,8 @@ IVAR_DECL(id, TMTimelineStatusCell, _usernameRenderer);
 }
 @end
 
-static void
-twitter_plus_init()
+__attribute__((constructor)) void
+flint_plus_main()
 {
     IVAR_DEFN(ABUITextRenderer, attributedString);
     IVAR_DEFN(TMTimelineStatusCell, _fullNameRenderer);
@@ -48,22 +48,4 @@ twitter_plus_init()
     twitter_plus_patch("TMTimelineStatusCell", "prepareForDisplay");
 
     fprintf(stderr, "TwitterPlus loaded!\n");
-
-    // exit(0);
-}
-
-static sig_t old_sigalrm;
-
-static void
-sigalrm()
-{
-    signal(SIGALRM, old_sigalrm);
-    twitter_plus_init();
-}
-
-__attribute__((constructor)) void
-flint_plus_main()
-{
-    old_sigalrm = signal(SIGALRM, sigalrm);
-    alarm(1);
 }
