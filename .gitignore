@@ -1,0 +1,4 @@
+/class_dump.h
+
+*.o
+*.dylib
