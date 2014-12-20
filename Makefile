@@ -15,7 +15,7 @@ run: twitter_plus.dylib
 twitter_plus.dylib: $(OBJECTS)
 	$(CC) -o $@ $(LDFLAGS) $(CFLAGS) $^
 
-%.o: %.m src/*.h
+%.o: %.mm src/*.hh
 	$(CC) -o $@ $(CFLAGS) -c $<
 
 class_dump.h: $(TWITTER_PATH)

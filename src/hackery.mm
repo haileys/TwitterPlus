@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#import "hackery.h"
+#import "hackery.hh"
 
 void
 twitter_plus_patch(const char* klass_name, const char* mid)

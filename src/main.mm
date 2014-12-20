@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <objc/runtime.h>
 #import <Foundation/Foundation.h>
-#import "hackery.h"
+#import "hackery.hh"
 
 IVAR_DECL(NSAttributedString*, ABUITextRenderer, attributedString);
 IVAR_DECL(id, TMTimelineStatusCell, _fullNameRenderer);
@@ -12,8 +12,8 @@ IVAR_DECL(id, TMDetailedStatusCell, _usernameRenderer);
 static void
 swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
 {
-    NSAttributedString* fullNameRendererStr = ABUITextRenderer_attributedString_get(fullNameRenderer);
-    NSAttributedString* usernameRendererStr = ABUITextRenderer_attributedString_get(usernameRenderer);
+    NSAttributedString* fullNameRendererStr = ABUITextRenderer_attributedString.get(fullNameRenderer);
+    NSAttributedString* usernameRendererStr = ABUITextRenderer_attributedString.get(usernameRenderer);
 
     // sketchy way to check if we've already swapped the full name and username
     // yes, this will break if someone's full name starts with a '@'.
@@ -25,11 +25,11 @@ swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
     NSDictionary* fullNameRendererStrAttributes = [fullNameRendererStr attributesAtIndex:0 effectiveRange:NULL];
     NSDictionary* usernameRendererStrAttributes = [usernameRendererStr attributesAtIndex:0 effectiveRange:NULL];
 
-    ABUITextRenderer_attributedString_set(usernameRenderer,
+    ABUITextRenderer_attributedString.set(usernameRenderer,
         [[NSAttributedString alloc] initWithString:[fullNameRendererStr string]
                                     attributes:usernameRendererStrAttributes]);
 
-    ABUITextRenderer_attributedString_set(fullNameRenderer,
+    ABUITextRenderer_attributedString.set(fullNameRenderer,
         [[NSAttributedString alloc] initWithString:[usernameRendererStr string]
                                     attributes:fullNameRendererStrAttributes]);
 
@@ -40,16 +40,16 @@ swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
 static void
 swap_timeline_status_full_name_and_username(id timeline_status_cell)
 {
-    id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer_get(timeline_status_cell);
-    id usernameRenderer = TMTimelineStatusCell__usernameRenderer_get(timeline_status_cell);
+    id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer.get(timeline_status_cell);
+    id usernameRenderer = TMTimelineStatusCell__usernameRenderer.get(timeline_status_cell);
     swap_full_name_and_username_renderers(fullNameRenderer, usernameRenderer);
 }
 
 static void
 swap_detailed_status_full_name_and_username(id detailed_status_cell)
 {
-    id fullNameRenderer = TMDetailedStatusCell__fullNameRenderer_get(detailed_status_cell);
-    id usernameRenderer = TMDetailedStatusCell__usernameRenderer_get(detailed_status_cell);
+    id fullNameRenderer = TMDetailedStatusCell__fullNameRenderer.get(detailed_status_cell);
+    id usernameRenderer = TMDetailedStatusCell__usernameRenderer.get(detailed_status_cell);
     swap_full_name_and_username_renderers(fullNameRenderer, usernameRenderer);
 }
 
@@ -94,12 +94,6 @@ swap_detailed_status_full_name_and_username(id detailed_status_cell)
 __attribute__((constructor)) void
 flint_plus_main()
 {
-    IVAR_DEFN(ABUITextRenderer, attributedString);
-    IVAR_DEFN(TMTimelineStatusCell, _fullNameRenderer);
-    IVAR_DEFN(TMTimelineStatusCell, _usernameRenderer);
-    IVAR_DEFN(TMDetailedStatusCell, _fullNameRenderer);
-    IVAR_DEFN(TMDetailedStatusCell, _usernameRenderer);
-
     twitter_plus_patch("TMTimelineStatusCell", "prepareForDisplay");
     twitter_plus_patch("TMTimelineStatusCell", "drawAsSpecial");
 
