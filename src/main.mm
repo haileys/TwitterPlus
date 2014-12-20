@@ -20,7 +20,15 @@ swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
     // sketchy way to check if we've already swapped the full name and username
     // yes, this will break if someone's full name starts with a '@'.
     // patches welcome.
-    if([[fullNameRendererStr string] UTF8String][0] == '@') {
+    if([[fullNameRendererStr string] hasPrefix:@"@"]) {
+        return;
+    }
+
+    // some users have an empty full name. In this case fullNameRendererStr
+    // doesn't actually have any attributes so we can't simply swap in the
+    // username with the existing attributes. Just return for now so we at
+    // least don't crash the entire app.
+    if([fullNameRendererStr length] == 0) {
         return;
     }
 
