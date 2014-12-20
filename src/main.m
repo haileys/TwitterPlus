@@ -6,13 +6,12 @@
 IVAR_DECL(NSAttributedString*, ABUITextRenderer, attributedString);
 IVAR_DECL(id, TMTimelineStatusCell, _fullNameRenderer);
 IVAR_DECL(id, TMTimelineStatusCell, _usernameRenderer);
+IVAR_DECL(id, TMDetailedStatusCell, _fullNameRenderer);
+IVAR_DECL(id, TMDetailedStatusCell, _usernameRenderer);
 
 static void
-swap_handle_and_full_name(id timeline_status_cell)
+swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
 {
-    id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer_get(timeline_status_cell);
-    id usernameRenderer = TMTimelineStatusCell__usernameRenderer_get(timeline_status_cell);
-
     NSAttributedString* fullNameRendererStr = ABUITextRenderer_attributedString_get(fullNameRenderer);
     NSAttributedString* usernameRendererStr = ABUITextRenderer_attributedString_get(usernameRenderer);
 
@@ -38,6 +37,22 @@ swap_handle_and_full_name(id timeline_status_cell)
     [usernameRendererStrAttributes release];
 }
 
+static void
+swap_timeline_status_full_name_and_username(id timeline_status_cell)
+{
+    id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer_get(timeline_status_cell);
+    id usernameRenderer = TMTimelineStatusCell__usernameRenderer_get(timeline_status_cell);
+    swap_full_name_and_username_renderers(fullNameRenderer, usernameRenderer);
+}
+
+static void
+swap_detailed_status_full_name_and_username(id detailed_status_cell)
+{
+    id fullNameRenderer = TMDetailedStatusCell__fullNameRenderer_get(detailed_status_cell);
+    id usernameRenderer = TMDetailedStatusCell__usernameRenderer_get(detailed_status_cell);
+    swap_full_name_and_username_renderers(fullNameRenderer, usernameRenderer);
+}
+
 @interface TwitterPlus_TMTimelineStatusCell : NSObject
 - (void)original_prepareForDisplay;
 - (BOOL)original_drawAsSpecial;
@@ -47,12 +62,31 @@ swap_handle_and_full_name(id timeline_status_cell)
 - (void)prepareForDisplay
 {
     [self original_prepareForDisplay];
-    swap_handle_and_full_name(self);
+    swap_timeline_status_full_name_and_username(self);
 }
 
 - (BOOL)drawAsSpecial
 {
-    swap_handle_and_full_name(self);
+    swap_timeline_status_full_name_and_username(self);
+    return [self original_drawAsSpecial];
+}
+@end
+
+@interface TwitterPlus_TMDetailedStatusCell : NSObject
+- (void)original_prepareForDisplay;
+- (BOOL)original_drawAsSpecial;
+@end
+
+@implementation TwitterPlus_TMDetailedStatusCell
+- (void)prepareForDisplay
+{
+    [self original_prepareForDisplay];
+    swap_detailed_status_full_name_and_username(self);
+}
+
+- (BOOL)drawAsSpecial
+{
+    swap_detailed_status_full_name_and_username(self);
     return [self original_drawAsSpecial];
 }
 @end
@@ -63,9 +97,14 @@ flint_plus_main()
     IVAR_DEFN(ABUITextRenderer, attributedString);
     IVAR_DEFN(TMTimelineStatusCell, _fullNameRenderer);
     IVAR_DEFN(TMTimelineStatusCell, _usernameRenderer);
+    IVAR_DEFN(TMDetailedStatusCell, _fullNameRenderer);
+    IVAR_DEFN(TMDetailedStatusCell, _usernameRenderer);
 
     twitter_plus_patch("TMTimelineStatusCell", "prepareForDisplay");
     twitter_plus_patch("TMTimelineStatusCell", "drawAsSpecial");
+
+    twitter_plus_patch("TMDetailedStatusCell", "prepareForDisplay");
+    twitter_plus_patch("TMDetailedStatusCell", "drawAsSpecial");
 
     fprintf(stderr, "TwitterPlus loaded!\n");
 }
