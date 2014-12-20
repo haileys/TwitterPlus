@@ -129,7 +129,7 @@ swap_user_full_name_and_username(id user_cell)
 @end
 
 __attribute__((constructor)) void
-flint_plus_main()
+twitter_plus_main()
 {
     twitter_plus_patch("TMTimelineStatusCell", "prepareForDisplay");
     twitter_plus_patch("TMTimelineStatusCell", "drawAsSpecial");
