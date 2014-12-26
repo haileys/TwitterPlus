@@ -74,6 +74,7 @@ swap_user_full_name_and_username(id user_cell)
 @interface TwitterPlus_TMTimelineStatusCell : NSObject
 - (void)original_prepareForDisplay;
 - (BOOL)original_drawAsSpecial;
+- (BOOL)original_drawWithHighlight;
 @end
 
 @implementation TwitterPlus_TMTimelineStatusCell
@@ -87,6 +88,12 @@ swap_user_full_name_and_username(id user_cell)
 {
     swap_timeline_status_full_name_and_username(self);
     return [self original_drawAsSpecial];
+}
+
+- (BOOL)drawWithHighlight
+{
+    swap_timeline_status_full_name_and_username(self);
+    return [self original_drawWithHighlight];
 }
 @end
 
@@ -133,6 +140,7 @@ twitter_plus_main()
 {
     twitter_plus_patch("TMTimelineStatusCell", "prepareForDisplay");
     twitter_plus_patch("TMTimelineStatusCell", "drawAsSpecial");
+    twitter_plus_patch("TMTimelineStatusCell", "drawWithHighlight");
 
     twitter_plus_patch("TMDetailedStatusCell", "prepareForDisplay");
     twitter_plus_patch("TMDetailedStatusCell", "drawAsSpecial");
