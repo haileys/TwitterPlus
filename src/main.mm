@@ -68,7 +68,7 @@ put_username_in_retweet_attribution(id metaRenderer, id status)
 }
 
 static void
-swap_timeline_status_full_name_and_username(id timeline_status_cell)
+act_on_timeline_status_cell(id timeline_status_cell)
 {
     id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer.get(timeline_status_cell);
     id usernameRenderer = TMTimelineStatusCell__usernameRenderer.get(timeline_status_cell);
@@ -79,7 +79,7 @@ swap_timeline_status_full_name_and_username(id timeline_status_cell)
 }
 
 static void
-swap_detailed_status_full_name_and_username(id detailed_status_cell)
+act_on_detailed_status_cell(id detailed_status_cell)
 {
     id fullNameRenderer = TMDetailedStatusCell__fullNameRenderer.get(detailed_status_cell);
     id usernameRenderer = TMDetailedStatusCell__usernameRenderer.get(detailed_status_cell);
@@ -90,7 +90,7 @@ swap_detailed_status_full_name_and_username(id detailed_status_cell)
 }
 
 static void
-swap_user_full_name_and_username(id user_cell)
+act_on_user_cell(id user_cell)
 {
     id fullNameRenderer = TMUserCell__fullNameRenderer.get(user_cell);
     id usernameRenderer = TMUserCell__usernameRenderer.get(user_cell);
@@ -107,18 +107,18 @@ swap_user_full_name_and_username(id user_cell)
 - (void)prepareForDisplay
 {
     [self original_prepareForDisplay];
-    swap_timeline_status_full_name_and_username(self);
+    act_on_timeline_status_cell(self);
 }
 
 - (BOOL)drawAsSpecial
 {
-    swap_timeline_status_full_name_and_username(self);
+    act_on_timeline_status_cell(self);
     return [self original_drawAsSpecial];
 }
 
 - (BOOL)drawWithHighlight
 {
-    swap_timeline_status_full_name_and_username(self);
+    act_on_timeline_status_cell(self);
     return [self original_drawWithHighlight];
 }
 @end
@@ -132,12 +132,12 @@ swap_user_full_name_and_username(id user_cell)
 - (void)prepareForDisplay
 {
     [self original_prepareForDisplay];
-    swap_detailed_status_full_name_and_username(self);
+    act_on_detailed_status_cell(self);
 }
 
 - (BOOL)drawAsSpecial
 {
-    swap_detailed_status_full_name_and_username(self);
+    act_on_detailed_status_cell(self);
     return [self original_drawAsSpecial];
 }
 @end
@@ -151,12 +151,12 @@ swap_user_full_name_and_username(id user_cell)
 - (void)prepareForDisplay
 {
     [self original_prepareForDisplay];
-    swap_user_full_name_and_username(self);
+    act_on_user_cell(self);
 }
 
 - (BOOL)drawAsSpecial
 {
-    swap_user_full_name_and_username(self);
+    act_on_user_cell(self);
     return [self original_drawAsSpecial];
 }
 @end
