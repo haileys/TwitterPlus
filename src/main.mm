@@ -13,6 +13,7 @@ IVAR_DECL(id, TMDetailedStatusCell, _metaTextRenderer);
 IVAR_DECL(id, TMUserCell, _fullNameRenderer);
 IVAR_DECL(id, TMUserCell, _usernameRenderer);
 IVAR_DECL(id, TwitterStatus, _fromUser);
+IVAR_DECL(id, TwitterStatus, _retweetedStatus);
 IVAR_DECL(id, TwitterUser, _username);
 
 static void
@@ -54,6 +55,10 @@ swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
 static void
 put_username_in_retweet_attribution(id metaRenderer, id status)
 {
+    if(!TwitterStatus__retweetedStatus.get(status)) {
+        return;
+    }
+
     NSAttributedString* metaRendererStr = ABUITextRenderer_attributedString.get(metaRenderer);
 
     NSDictionary* metaRendererStrAttributes = [metaRendererStr attributesAtIndex:0 effectiveRange:NULL];
