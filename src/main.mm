@@ -6,10 +6,14 @@
 IVAR_DECL(NSAttributedString*, ABUITextRenderer, attributedString);
 IVAR_DECL(id, TMTimelineStatusCell, _fullNameRenderer);
 IVAR_DECL(id, TMTimelineStatusCell, _usernameRenderer);
+IVAR_DECL(id, TMTimelineStatusCell, _metaRenderer);
 IVAR_DECL(id, TMDetailedStatusCell, _fullNameRenderer);
 IVAR_DECL(id, TMDetailedStatusCell, _usernameRenderer);
+IVAR_DECL(id, TMDetailedStatusCell, _metaTextRenderer);
 IVAR_DECL(id, TMUserCell, _fullNameRenderer);
 IVAR_DECL(id, TMUserCell, _usernameRenderer);
+IVAR_DECL(id, TwitterStatus, _fromUser);
+IVAR_DECL(id, TwitterUser, _username);
 
 static void
 swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
@@ -48,11 +52,30 @@ swap_full_name_and_username_renderers(id fullNameRenderer, id usernameRenderer)
 }
 
 static void
+put_username_in_retweet_attribution(id metaRenderer, id status)
+{
+    NSAttributedString* metaRendererStr = ABUITextRenderer_attributedString.get(metaRenderer);
+
+    NSDictionary* metaRendererStrAttributes = [metaRendererStr attributesAtIndex:0 effectiveRange:NULL];
+
+    NSString* username = TwitterUser__username.get(TwitterStatus__fromUser.get(status));
+
+    NSString* retweetAttributionLabel = [NSString stringWithFormat:@"@%@ retweeted", username];
+
+    ABUITextRenderer_attributedString.set(metaRenderer,
+        [[NSAttributedString alloc] initWithString:retweetAttributionLabel
+                                    attributes:metaRendererStrAttributes]);
+}
+
+static void
 swap_timeline_status_full_name_and_username(id timeline_status_cell)
 {
     id fullNameRenderer = TMTimelineStatusCell__fullNameRenderer.get(timeline_status_cell);
     id usernameRenderer = TMTimelineStatusCell__usernameRenderer.get(timeline_status_cell);
     swap_full_name_and_username_renderers(fullNameRenderer, usernameRenderer);
+
+    id metaRenderer = TMTimelineStatusCell__metaRenderer.get(timeline_status_cell);
+    put_username_in_retweet_attribution(metaRenderer, (id)[timeline_status_cell status]);
 }
 
 static void
@@ -61,6 +84,9 @@ swap_detailed_status_full_name_and_username(id detailed_status_cell)
     id fullNameRenderer = TMDetailedStatusCell__fullNameRenderer.get(detailed_status_cell);
     id usernameRenderer = TMDetailedStatusCell__usernameRenderer.get(detailed_status_cell);
     swap_full_name_and_username_renderers(fullNameRenderer, usernameRenderer);
+
+    id metaRenderer = TMDetailedStatusCell__metaTextRenderer.get(detailed_status_cell);
+    put_username_in_retweet_attribution(metaRenderer, (id)[detailed_status_cell status]);
 }
 
 static void
